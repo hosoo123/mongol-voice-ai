@@ -1,0 +1,16 @@
+#!/bin/sh
+
+echo ""
+echo "🤖 Updating AI_HANDOFF.md..."
+
+node scripts/update-handoff.mjs
+
+if [ $? -ne 0 ]; then
+  echo "❌ Failed to update AI_HANDOFF.md"
+  exit 1
+fi
+
+git add AI_HANDOFF.md
+
+echo "✅ AI_HANDOFF.md updated and staged."
+echo ""
