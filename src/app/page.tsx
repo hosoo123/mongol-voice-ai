@@ -34,7 +34,7 @@ export default function Home() {
   const [text, setText] = useState("");
   const [isListening, setIsListening] = useState(false);
   const [error, setError] = useState("");
-
+  const [interimText, setInterimText] = useState("");
   useEffect(() => {
     return () => recognitionRef.current?.abort();
   }, []);
@@ -52,7 +52,7 @@ export default function Home() {
 
     if (!SpeechRecognition) {
       setError(
-        "Таны browser speech recognition-ийг дэмжихгүй байна. Chrome эсвэл Edge ашиглаарай."
+        "Таны browser speech recognition-ийг дэмжихгүй байна. Chrome эсвэл Edge ашиглаарай.",
       );
       return;
     }
@@ -69,11 +69,7 @@ export default function Home() {
       let finalText = "";
       let interimText = "";
 
-      for (
-        let i = event.resultIndex ?? 0;
-        i < event.results.length;
-        i += 1
-      ) {
+      for (let i = event.resultIndex ?? 0; i < event.results.length; i += 1) {
         const transcript = event.results[i][0].transcript;
 
         if (event.results[i].isFinal) {
@@ -83,16 +79,9 @@ export default function Home() {
         }
       }
 
+      setInterimText(interimText);
       if (finalText) {
         setText((previous) => (previous + " " + finalText).trim());
-      } else if (interimText) {
-        setText(
-          (previous) =>
-            previous.replace(/\s*\[түр хүлээн авч байна\]$/, "").trim() +
-            (previous ? " " : "") +
-            interimText +
-            " [түр хүлээн авч байна]"
-        );
       }
     };
 
@@ -101,7 +90,7 @@ export default function Home() {
 
       if (event.error === "not-allowed") {
         setError(
-          "Микрофоны зөвшөөрөл хаалттай байна. Browser-ийн microphone permission-ийг Allow болгоорой."
+          "Микрофоны зөвшөөрөл хаалттай байна. Browser-ийн microphone permission-ийг Allow болгоорой.",
         );
       } else if (event.error === "no-speech") {
         setError("Дуу хоолой сонсогдсонгүй. Дахин ярьж үзээрэй.");
@@ -159,7 +148,7 @@ export default function Home() {
           {isListening ? "■" : "🎙️"}
         </button>
 
-        <div className="w-full rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+        <div className="w-full rounded-3xl border border-white/10 bg-white/4 p-6">
           <div className="mb-3 flex items-center justify-between">
             <span className="text-sm font-medium text-zinc-400">
               {isListening ? "Сонсож байна..." : "Таны яриа"}
@@ -177,7 +166,7 @@ export default function Home() {
           </div>
 
           <p className="min-h-32 whitespace-pre-wrap text-lg leading-8 text-zinc-100">
-            {text || "Микрофоноо дараад ярьж эхлээрэй..."}
+            {text + " " + interimText || "Микрофоноо дараад ярьж эхлээрэй..."}
           </p>
         </div>
 
